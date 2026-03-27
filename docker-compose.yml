@@ -1,0 +1,75 @@
+version: '3.9'
+
+services:
+  # ─── FastAPI Backend ──────────────────────────────
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: hireai-backend
+    restart: always
+    ports:
+      - "8000:8000"
+    env_file:
+      - ./backend/.env
+    environment:
+      - REDIS_URL=redis://redis:6379
+    depends_on:
+      - redis
+    networks:
+      - hireai-net
+
+  # ─── Celery Worker (Background Tasks) ────────────
+  celery-worker:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: hireai-celery
+    restart: always
+    command: celery -A app.tasks worker --loglevel=info --concurrency=4
+    env_file:
+      - ./backend/.env
+    environment:
+      - REDIS_URL=redis://redis:6379
+    depends_on:
+      - redis
+      - backend
+    networks:
+      - hireai-net
+
+  # ─── Redis ────────────────────────────────────────
+  redis:
+    image: redis:7-alpine
+    container_name: hireai-redis
+    restart: always
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
+    networks:
+      - hireai-net
+
+  # ─── Frontend (Production) ───────────────────────────
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        # These are needed at build time for Next.js to embed them
+        - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL:-http://localhost:8000}
+        - NEXT_PUBLIC_SUPABASE_URL=${SUPABASE_URL}
+        - NEXT_PUBLIC_SUPABASE_ANON_KEY=${SUPABASE_KEY}
+    container_name: hireai-frontend
+    restart: always
+    ports:
+      - "3000:3000"
+    networks:
+      - hireai-net
+
+volumes:
+  redis-data:
+
+networks:
+  hireai-net:
+    driver: bridge
