@@ -8,12 +8,15 @@ echo "🚀 Starting HireAI Deployment..."
 # 1. Update and Install Docker
 if ! [ -x "$(command -v docker)" ]; then
     echo "📦 Installing Docker..."
-    sudo apt-get update
-    sudo apt-get install -y ca-certificates curl gnupg lsb-release
-    sudo mkdir -p /etc/apt/keyrings    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+    export DEBIAN_FRONTEND=noninteractive
+    sudo -E apt-get update
+    sudo -E apt-get install -y ca-certificates curl gnupg lsb-release
+    sudo mkdir -p /etc/apt/keyrings
+    sudo rm -f /etc/apt/keyrings/docker.gpg
+    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --yes --dearmor -o /etc/apt/keyrings/docker.gpg
     echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
-    sudo apt-get update
-    sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin
+    sudo -E apt-get update
+    sudo -E apt-get install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin
 fi
 
 # 2. Check for .env files
