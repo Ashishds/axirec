@@ -1,5 +1,7 @@
 'use client'
 
+export const dynamic = 'force-dynamic'
+
 import { useEffect } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { supabase } from '@/lib/supabaseClient'
@@ -8,7 +10,9 @@ import { getApiUrl } from '@/lib/api'
 import toast from 'react-hot-toast'
 import { Loader2 } from 'lucide-react'
 
-export default function AuthCallback() {
+import { Suspense } from 'react'
+
+function AuthCallbackContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const role = searchParams.get('role') || 'candidate'
@@ -62,5 +66,13 @@ export default function AuthCallback() {
         <p className="text-surface-500 text-sm">Please wait while we sync your profile and prepare your dashboard.</p>
       </div>
     </div>
+  )
+}
+
+export default function AuthCallback() {
+  return (
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center"><Loader2 className="w-10 h-10 text-brand-600 animate-spin" /></div>}>
+      <AuthCallbackContent />
+    </Suspense>
   )
 }

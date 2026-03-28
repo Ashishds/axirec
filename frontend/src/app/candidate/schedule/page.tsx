@@ -1,6 +1,8 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+export const dynamic = 'force-dynamic'
+
+import { useState, useEffect, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import axios from 'axios'
 import Link from 'next/link'
@@ -56,7 +58,7 @@ const availableSlots = [
   },
 ]
 
-export default function SchedulePage() {
+function ScheduleContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const appId = searchParams.get('app_id')
@@ -253,11 +255,6 @@ export default function SchedulePage() {
                     <p className="text-sm text-surface-600 font-medium mb-4 italic">Select a time slot to continue.</p>
                   )}
 
-                  {/* Assuming 'job' object is available in scope for tags */}
-                  {/* {job.tags.map((tag: string) => (
-                    <span key={tag} className="text-xs bg-surface-100 text-surface-700 px-2.5 py-1 rounded-lg font-medium">{tag}</span>
-                  ))} */}
-
                   <button
                     onClick={handleConfirm}
                     disabled={!selectedSlot || confirming}
@@ -320,5 +317,13 @@ export default function SchedulePage() {
         )}
       </div>
     </div>
+  )
+}
+
+export default function SchedulePage() {
+  return (
+    <Suspense fallback={<div className="p-10 text-center text-surface-500 flex flex-col items-center gap-4"><Loader2 className="w-8 h-8 animate-spin text-brand-600" /> Loading schedule...</div>}>
+      <ScheduleContent />
+    </Suspense>
   )
 }

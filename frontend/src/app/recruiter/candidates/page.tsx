@@ -1,5 +1,7 @@
 'use client'
 
+export const dynamic = 'force-dynamic'
+
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
@@ -30,7 +32,10 @@ const statusConfig: Record<string, { label: string; dot: string; bg: string; tex
 
 const scoreColor = (s: number) => s >= 85 ? 'text-green-600' : s >= 70 ? 'text-amber-600' : s > 0 ? 'text-red-500' : 'text-surface-300'
 
-export default function CandidatesPage() {
+import { Suspense } from 'react'
+import { Loader2 } from 'lucide-react'
+
+function CandidatesContent() {
   const searchParams = useSearchParams()
   const jobIdParam = searchParams.get('job_id')
   const jobTitleParam = searchParams.get('job_title')
@@ -333,5 +338,13 @@ export default function CandidatesPage() {
         </div>
       )}
     </div>
+  )
+}
+
+export default function CandidatesPage() {
+  return (
+    <Suspense fallback={<div className="p-10 text-center flex flex-col items-center gap-4"><Loader2 className="w-8 h-8 animate-spin text-brand-600" /> Loading candidates...</div>}>
+      <CandidatesContent />
+    </Suspense>
   )
 }

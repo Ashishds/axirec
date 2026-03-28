@@ -1,5 +1,7 @@
 'use client'
 
+export const dynamic = 'force-dynamic'
+
 import { useState, useCallback, useEffect } from 'react'
 import { useDropzone } from 'react-dropzone'
 import { useRouter, useSearchParams } from 'next/navigation'
@@ -16,7 +18,9 @@ import toast from 'react-hot-toast'
 
 type Step = 'details' | 'upload' | 'processing' | 'done'
 
-export default function ApplyPage() {
+import { Suspense } from 'react'
+
+function ApplyContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const [step, setStep] = useState<Step>('details')
@@ -73,7 +77,7 @@ export default function ApplyPage() {
       }
     }
     fetchProfile()
-  }, [searchParams])
+  }, [searchParams, router])
 
   const onDrop = useCallback((accepted: File[]) => {
     if (accepted.length > 0) {
@@ -322,5 +326,13 @@ export default function ApplyPage() {
         </div>
       </div>
     </div>
+  )
+}
+
+export default function ApplyPage() {
+  return (
+    <Suspense fallback={<div className="p-10 text-center text-surface-500 flex flex-col items-center gap-4"><Loader2 className="w-8 h-8 animate-spin text-brand-600" /> Loading application...</div>}>
+      <ApplyContent />
+    </Suspense>
   )
 }

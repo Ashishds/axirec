@@ -19,23 +19,7 @@ services:
     networks:
       - hireai-net
 
-  # ─── Celery Worker (Background Tasks) ────────────
-  celery-worker:
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
-    container_name: hireai-celery
-    restart: always
-    command: celery -A app.tasks worker --loglevel=info --concurrency=4
-    env_file:
-      - ./backend/.env
-    environment:
-      - REDIS_URL=redis://redis:6379
-    depends_on:
-      - redis
-      - backend
-    networks:
-      - hireai-net
+
 
   # ─── Redis ────────────────────────────────────────
   redis:
