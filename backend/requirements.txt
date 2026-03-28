@@ -15,8 +15,10 @@ langchain==0.1.9
 langchain-openai==0.0.8
 tiktoken>=0.7.0
 
-# PDF Parsing
+# Document Parsing
 pymupdf>=1.24.0
+pdfplumber>=0.11.0
+docx2txt>=0.8
 
 # Async / Task Queue
 celery==5.3.6
