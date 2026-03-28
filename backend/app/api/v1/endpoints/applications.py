@@ -59,11 +59,14 @@ async def run_screening_pipeline(
     """
     Background task: Parse resume → Match with JD → Update DB → Send invite.
     """
-    debug_log = f"c:/Users/ashish/Desktop/Profile_project/Hiring_AI/backend/screening_debug_{application_id}.log"
+    debug_log = os.path.join(tempfile.gettempdir(), f"screening_debug_{application_id}.log")
     
     def log(msg: str):
-        with open(debug_log, "a", encoding="utf-8") as f:
-            f.write(f"[{datetime.now().isoformat()}] {msg}\n")
+        try:
+            with open(debug_log, "a", encoding="utf-8") as f:
+                f.write(f"[{datetime.now().isoformat()}] {msg}\n")
+        except Exception:
+            pass  # Fallback to print if file write fails
         print(f"DEBUG_PIPELINE: {msg}")
 
     log(f"🚀 STARTING SCREENING for {candidate_email}")
