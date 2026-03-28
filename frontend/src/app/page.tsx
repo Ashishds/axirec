@@ -152,7 +152,16 @@ export default function HomePage() {
           : 'bg-transparent'
       }`}>
         <div className="max-w-7xl mx-auto px-6 h-[68px] flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2.5 group">
+          <Link 
+            href="/" 
+            className="flex items-center gap-2.5 group cursor-pointer"
+            onClick={(e) => {
+              if (window.location.pathname === '/') {
+                e.preventDefault();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }
+            }}
+          >
             <Image src="/hireai-logo.png" alt="HireAI" width={40} height={40} className="rounded-xl object-cover shadow-md logo-glow group-hover:scale-105 transition-transform" />
             <span className="text-xl font-bold text-surface-900 tracking-tight">HireAI</span>
           </Link>
@@ -583,11 +592,11 @@ export default function HomePage() {
       <footer className="bg-surface-950 py-12 border-t border-surface-800/60">
         <div className="max-w-7xl mx-auto px-6">
           <div className="flex flex-col md:flex-row justify-between items-center gap-6">
-            <div className="flex items-center gap-3">
+            <Link href="/" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
               <Image src="/hireai-logo.png" alt="HireAI" width={32} height={32} className="rounded-lg object-cover opacity-80 logo-glow" />
               <span className="font-bold text-lg text-white">HireAI</span>
               <span className="text-surface-700 text-xs hidden sm:block">— AI Recruitment Platform</span>
-            </div>
+            </Link>
             <p className="text-xs text-surface-600 text-center">© 2026 HireAI Technologies. All rights reserved. Designed for smarter hiring.</p>
             <div className="flex gap-6">
               {['Privacy Policy', 'Terms of Service', 'Support'].map(link => (
